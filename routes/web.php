@@ -67,3 +67,7 @@ Route::middleware(['auth', 'role'])->group(function () {
     // Komentar
     Route::get('/komentar', [KomentarController::class, 'data'])->name('komentar.data');
 });
+
+Route::get('/test-https', function () {
+    return request()->isSecure() ? 'HTTPS' : 'NOT HTTPS';
+});
