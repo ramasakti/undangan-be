@@ -14,7 +14,8 @@ class UserRoleSeed extends Seeder
     public function run(): void
     {
         $data = [
-            ['user_id' => 1, 'role_id' => 1]
+            ['user_id' => 1, 'role_id' => 1],
+            ['user_id' => 2, 'role_id' => 1]
         ];
         DB::table('user_role')->insert($data);
     }

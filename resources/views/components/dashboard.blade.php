@@ -197,7 +197,7 @@
             Toastify({
                 text: "{!! $message !!}",
                 duration: 3000,
-                position: "center",
+                position: "right",
                 style: {
                     background: "#0ca678"
                 }
@@ -207,7 +207,7 @@
                 Toastify({
                     text: "{!! $error !!}",
                     duration: 3000,
-                    position: "center",
+                    position: "right",
                     style: {
                         background: "#d63939"
                     }

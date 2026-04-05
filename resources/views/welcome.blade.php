@@ -75,6 +75,10 @@
                         <div class="form-footer">
                             <button type="submit" class="btn btn-primary w-100">Sign in</button>
                         </div>
+                        <div class="hr-text">ATAU</div>
+                        <a href="/auth/google" class="btn btn-outline w-100">
+                            <span class="icon social social-app-google"></span>Login With Google
+                        </a>
                     </form>
                 </div>
             </div>

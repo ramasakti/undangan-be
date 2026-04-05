@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\KelasModel;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -17,9 +17,8 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $user = User::with(['userRole.role', 'userInstitusi.institusi'])->where('id', Auth::user()->id)->first();
+            $user = User::with('userRole.role')->where('id', Auth::user()->id)->first();
             $request->session()->put('roles', $user->userRole);
-            $request->session()->put('institusies', $user->userInstitusi);
 
             $request->session()->regenerate();
             return redirect()->intended('dashboard');
@@ -41,5 +40,22 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function redirect()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function callback(Request $request)
+    {
+        $google = Socialite::driver('google')->user();
+        $user = User::with('userRole.role')->where('email', $google->email)->first();
+        if (!$user) return back()->with('failed', 'User tidak terdaftar!');
+
+        Auth::login($user);
+        $request->session()->put('roles', $user->userRole);
+
+        return redirect('/dashboard');
     }
 }
