@@ -25,3 +25,6 @@ Thumbs.db
 /public/docs
 /public/marketing
 /public/**/*.html
+/public/**/*.jpg
+/public/**/*.jpeg
+/public/**/*.png
