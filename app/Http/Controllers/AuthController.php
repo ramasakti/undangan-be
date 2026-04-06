@@ -19,6 +19,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = User::with('userRole.role')->where('id', Auth::user()->id)->first();
             $request->session()->put('roles', $user->userRole);
+            dd($request->session()->get('roles'), $user, Auth::user());
 
             $request->session()->regenerate();
             return redirect()->intended('dashboard');
