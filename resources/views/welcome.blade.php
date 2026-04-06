@@ -31,7 +31,7 @@
     <div class="page">
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
-                <img src="/images/logo.png" style="max-height: 100px;">
+                <span class="avatar">IR</span>
             </div>
             <div class="card card-md">
                 <div class="card-body">
@@ -56,6 +56,15 @@
                             </div>
                         </div>
                     @endsession
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <form action="{{ route('authenticate') }}" method="post" autocomplete="off" novalidate>
                         @csrf
                         <div class="mb-3">

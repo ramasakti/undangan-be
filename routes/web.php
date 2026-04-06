@@ -60,7 +60,8 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::put('/{id}', [TamuController::class, 'update'])->name('tamu.update');
         Route::delete('/{id}', [TamuController::class, 'destroy'])->name('tamu.destroy');
 
-        Route::post('/import', [TamuController::class, 'import'])->name('tamu.import');
+        Route::post('/import/excel', [TamuController::class, 'import'])->name('tamu.import');
+        Route::get('/export/excel', [TamuController::class, 'export'])->name('tamu.export');
         Route::delete('/delete/mass', [TamuController::class, 'massdel'])->name('tamu.massdel');
     });
 

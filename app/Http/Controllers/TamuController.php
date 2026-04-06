@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TamuModel as Tamu;
 use Illuminate\Support\Str;
+use App\Exports\TamuTemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TamuImport;
 use App\Models\TamuModel;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class TamuController extends Controller
 {
@@ -29,11 +32,13 @@ class TamuController extends Controller
             Tamu::create([
                 'kode_tamu' => Str::random(6),
                 'nama_tamu' => $request->nama_tamu,
-                'no_wa' => $request->no_wa
+                'no_wa' => $request->no_wa,
+                'uploaded_by' => Auth::user()->id
             ]);
 
             return back()->with('success', 'Tamu berhasil ditambahkan');
         } catch (\Exception $e) {
+            Log::error('Gagal menambahkan tamu: ' . $e->getMessage());
             return back()->with('failed', 'Gagal menambahkan tamu');
         }
     }
@@ -55,6 +60,7 @@ class TamuController extends Controller
 
             return back()->with('success', 'Tamu berhasil diupdate');
         } catch (\Exception $e) {
+            Log::error('Gagal update tamu: ' . $e->getMessage());
             return back()->with('failed', 'Gagal update tamu');
         }
     }
@@ -67,6 +73,7 @@ class TamuController extends Controller
 
             return back()->with('success', 'Tamu berhasil dihapus');
         } catch (\Exception $e) {
+            Log::error('Gagal hapus tamu: ' . $e->getMessage());
             return back()->with('failed', 'Gagal menghapus tamu');
         }
     }
@@ -82,8 +89,14 @@ class TamuController extends Controller
 
             return back()->with('success', 'Import Excel berhasil');
         } catch (\Exception $e) {
+            Log::error('Import Excel gagal: ' . $e->getMessage());
             return back()->with('failed', 'Import Excel gagal');
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new TamuTemplateExport, 'Template Tamu.xlsx');
     }
 
     public function show($kode_tamu)
@@ -96,6 +109,7 @@ class TamuController extends Controller
                 'data' => $tamu
             ]);
         } catch (\Exception $e) {
+            Log::error('Gagal ambil data tamu: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Internal server error!'
             ], 500);
@@ -104,15 +118,20 @@ class TamuController extends Controller
 
     public function massdel(Request $request)
     {
-        $request->validate([
-            "id_tamu" => "required|string"
-        ]);
+        try {
+            $request->validate([
+                "id_tamu" => "required|string"
+            ]);
 
-        $ids = explode(",", $request->id_tamu);
-        $tamu = TamuModel::whereIn("id", $ids)->get();
-        $jumlah = $tamu->count();
-        TamuModel::destroy($ids);
+            $ids = explode(",", $request->id_tamu);
+            $tamu = TamuModel::whereIn("id", $ids)->get();
+            $jumlah = $tamu->count();
+            TamuModel::destroy($ids);
 
-        return back()->with("success", "Berhasil hapus {$jumlah} tamu");
+            return back()->with("success", "Berhasil hapus {$jumlah} tamu");
+        } catch (\Exception $e) {
+            Log::error('Gagal hapus tamu: ' . $e->getMessage());
+            return back()->with('failed', 'Gagal menghapus tamu');
+        }
     }
 }
