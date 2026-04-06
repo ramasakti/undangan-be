@@ -11,13 +11,11 @@ class AuthController extends Controller
 {
     public function authenticate(Request $request)
     {
-        dd($request->all());
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        dd($credentials);
         if (Auth::attempt($credentials)) {
             $user = User::with('userRole.role')->where('id', Auth::user()->id)->first();
             $request->session()->put('roles', $user->userRole);
