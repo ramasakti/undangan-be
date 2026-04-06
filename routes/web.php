@@ -71,3 +71,8 @@ Route::middleware(['auth', 'role'])->group(function () {
 Route::get('/test-https', function () {
     return request()->isSecure() ? 'HTTPS' : 'NOT HTTPS';
 });
+
+Route::get('/test-session', function () {
+    session(['test_key' => 'test_value']);
+    return session('test_key');
+});
