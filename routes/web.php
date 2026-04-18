@@ -10,6 +10,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\TamuController;
 use App\Http\Controllers\KomentarController;
+use App\Http\Controllers\WAHAController;
 
 // Auth
 Route::middleware('guest')->group(function () {
@@ -67,13 +68,11 @@ Route::middleware(['auth', 'role'])->group(function () {
 
     // Komentar
     Route::get('/komentar', [KomentarController::class, 'data'])->name('komentar.data');
-});
 
-Route::get('/test-https', function () {
-    return request()->isSecure() ? 'HTTPS' : 'NOT HTTPS';
-});
-
-Route::get('/test-session', function () {
-    session(['test_key' => 'test_value']);
-    return session('test_key');
+    // Whatsapp WAHA Connector
+    Route::prefix('waha')->group(function () {
+        Route::get('/connect', [WAHAController::class, 'connect'])->name('waha.connect');
+        Route::post('/connect', [WAHAController::class, 'connecting'])->name('waha.connect.method');
+        Route::get('/connect/success', [WAHAController::class, 'success'])->name('waha.connect.success');
+    });
 });
