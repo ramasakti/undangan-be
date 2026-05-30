@@ -61,6 +61,7 @@ class WAHAController extends Controller
         $status = $info['status'] ?? null;
         if ($status === null || $status == "STOPPED" || $status == "FAILED") $waha->restartSession(Auth::user()->username);
 
+        // dd($status);
         return view("waha.index", [
             "title" => $title,
             "status" => $status

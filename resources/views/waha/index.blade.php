@@ -1,6 +1,6 @@
 <x-dashboard title="{{ $title }}">
     <div class="card">
-        @if ($status !== 'CONNECTED' && !session('qr') && !session('otp'))
+        @if ($status !== 'CONNECTED' && !session('qr') && !session('otp') && $status !== 'WORKING')
             <div class="card-body">
                 <h3 class="card-title">Whatsapp Connector</h3>
                 <form action="{{ route('waha.connect') }}" method="post">

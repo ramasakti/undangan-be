@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccessController;
+use App\Http\Controllers\BroadcastController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\KomentarController;
 use App\Http\Controllers\TamuController;
@@ -22,3 +23,5 @@ Route::prefix('komentar')->group(function () {
 Route::prefix('tamu')->group(function () {
     Route::get('/{kode_tamu}', [TamuController::class, 'show']);
 });
+
+Route::post('/broadcast', [BroadcastController::class, 'send']);

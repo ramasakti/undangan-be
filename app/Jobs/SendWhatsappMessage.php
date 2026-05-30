@@ -25,6 +25,29 @@ class SendWhatsappMessage implements ShouldQueue
         $this->text = $text;
     }
 
+    private function formatNomor($nomor): string
+    {
+        // Hapus karakter selain angka
+        $nomor = preg_replace('/[^0-9]/', '', $nomor);
+
+        // 08xxxx -> 628xxxx
+        if (substr($nomor, 0, 2) === '08') {
+            return '62' . substr($nomor, 1);
+        }
+
+        // 8xxxx -> 628xxxx
+        if (substr($nomor, 0, 1) === '8') {
+            return '62' . $nomor;
+        }
+
+        // 628xxxx
+        if (substr($nomor, 0, 2) === '62') {
+            return $nomor;
+        }
+
+        return $nomor;
+    }
+
     /**
      * Execute the job.
      */
@@ -34,20 +57,27 @@ class SendWhatsappMessage implements ShouldQueue
         $apiKey = env("WAHA_API_KEY");
 
         try {
-            Http::withHeaders([
-                'accept' => 'application/json',
-                'X-Api-Key' => $apiKey,
-                'Content-Type' => 'application/json',
-            ])->post($url, [
-                "chatId" => $this->nomor . "@c.us",
-                "reply_to" => null,
-                "text" => $this->text,
-                "linkPreview" => true,
-                "linkPreviewHighQuality" => true,
-                "session" => "default"
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'accept' => 'application/json',
+                    'X-Api-Key' => $apiKey,
+                    'x-session-id' => 'ramasakti',
+                    'Content-Type' => 'application/json',
+                ])
+                ->post($url, [
+                    "chatId" => $this->formatNomor($this->nomor) . '@c.us',
+                    "text" => $this->text,
+                    "session" => "default",
+                    "linkPreview" => true,
+                    "linkPreviewHighQuality" => true,
+                ]);
+
+            Log::info('WAHA RESPONSE', [
+                'status' => $response->status(),
+                'body' => $response->body()
             ]);
         } catch (\Exception $e) {
-            Log::error("WAHA error ke {$this->nomor} : ".$e->getMessage());
+            Log::error("WAHA error ke {$this->nomor} : " . $e->getMessage());
         }
     }
 }

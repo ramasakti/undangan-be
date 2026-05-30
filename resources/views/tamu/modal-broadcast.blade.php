@@ -6,6 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="id_tamu" name="id_tamu">
                 <label class="form-label">Pesan</label>
                 <textarea class="form-control" id="pesan-broadcast" rows="5"
                     placeholder="Halo {nama}, silakan buka undangan berikut https://intan-rama.simskul.id"></textarea>
@@ -30,3 +31,41 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('kirim-broadcast').addEventListener('click', async () => {
+        const pesan = document.getElementById('pesan-broadcast').value;
+        const ids = document.getElementById('id_tamu')
+            .value
+            .split(',');
+
+        if (!pesan.trim()) {
+            alert('Pesan tidak boleh kosong');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/broadcast', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    pesan,
+                    tamu_ids: ids
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(result.message);
+                tabler.Modal.getInstance(
+                    document.getElementById('modal-broadcast')
+                ).hide();
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Terjadi kesalahan');
+        }
+    });
+</script>
