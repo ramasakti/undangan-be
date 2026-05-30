@@ -61,7 +61,7 @@ class SendWhatsappMessage implements ShouldQueue
                 ->withHeaders([
                     'accept' => 'application/json',
                     'X-Api-Key' => $apiKey,
-                    'x-session-id' => 'ramasakti',
+                    'x-session-id' => 'intanfajar78',
                     'Content-Type' => 'application/json',
                 ])
                 ->post($url, [
